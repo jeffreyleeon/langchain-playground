@@ -1,0 +1,20 @@
+langchain
+langserve[all]
+langchainhub
+langchain-cli
+langchain-community
+langchain-core
+langchain-experimental
+langchain_openai
+langsmith
+
+# HTML/XML parsing
+beautifulsoup4
+
+# Server
+fastapi[all]
+
+# Vector Store
+# faiss-gpu
+faiss-cpu
+

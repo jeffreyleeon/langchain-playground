@@ -1,0 +1,119 @@
+Large Language Model (LLM)
+- In simpler terms, an LLM is a computer program that has been fed enough examples to be able to recognize and interpret human language or other types of complex data.
+- Examples of real-world LLMs
+  - ChatGPT (OpenAI)
+  - Bard (Google)
+  - Llama (Meta)
+  - Bing Chat (Microsoft)
+  - Copilot (Github)
+- AI => Machine Learning => Deep Learning(using Neural network with transformer models) => LLM
+
+LLMChain
+- A simple chain that adds some functionality around language model. An LLMChain consists of a PromptTemplate and a language model (either an LLM or chat model).
+  - A LLM from any company (e.g. OpenAI) + A prompt template === LLMChain (Chained 2 things)
+  - chain = prompt_template | openai_llm
+
+Prompt templates
+- Used to convert raw user input to a better input to the LLM.
+- Prompt templates are structured, pre-defined instructions that serve as a starting point for generating AI content. These prompts are there to help writers and content creators craft compelling and relevant material efficiently.
+- They act as a creative guide, steering content in the right direction while leaving room for personalization and creativity. You can tell the AI to return content with an action button, such as "Shop Now" or "Learn More" at the end of the response.
+
+LangChain Core
+- A library with core functions for handling AIMessage, ChatHistory, Output processing, etc
+- https://api.python.langchain.com/en/latest/core_api_reference.html#module-langchain_core.output_parsers
+
+LangChain community
+- Community (3P) created LangChain Core. Contain customized docstore parser(e.g. WebBaseLoader) for example
+- https://api.python.langchain.com/en/stable/community_api_reference.html
+
+langchain_openai
+- LangChain OpenAI integrations lib
+  - chat_models
+  - embeddings
+  - llms
+
+Vector store
+- common ways to store and search over unstructured data is to embed it and store the resulting embedding vectors, and then at query time to embed the unstructured query and retrieve the embedding vectors that are 'most similar' to the embedded query.
+- Unstructured query from user => "MOST SIMILAR" embedded query
+- Embedded query => Embedded vectors (from vector store)
+- Vector store was pre-populated
+  - Can be searched by query or vector of the query
+- Sample vector store (https://api.python.langchain.com/en/latest/community_api_reference.html#module-langchain_community.vectorstores)
+  - pip install faiss-cpu
+  - pip install qdarnt-client (This is an asynchronous vector store)
+
+Text Embedding model
+- Embeddings create a vector representation of a piece of text.
+- Text embedding capture the meaning of a piece of text, context of a sentence.
+
+How to put embeddings into vector store
+- Load the doc => Split into chunks => Embed each chunk => Load into vector store
+- You can use different
+  - documents
+  - embedding library (OpenAI Embedding)
+  - vector stores (Facebook FAISS)
+
+Retrieval LangChain
+- Document loaders
+            - S3
+- Text Splitting
+            - langchain.text_splitter
+- Text Embedding
+            - langchain_openai import OpenAIEmbeddings
+- Vector Store
+            - langchain_community.vectorstores import FAISS
+- Retrievers
+            - vector.as_retriever()
+            - retrieval_chain = create_retrieval_chain(retriever, current_chain)
+
+
+Conversation Retrieval Chain
+- 2 additional things from Retrieval LangChain
+  - Retrieval method should take the whole history into account
+  - The final LLM chain should likewise take the whole history into account
+
+
+Agent
+The core idea of agents is to use a language model to choose a sequence of actions to take. In chains, a sequence of actions is hardcoded (in code). In agents, a language model is used as a reasoning engine to determine which actions to take and in which order.
+
+Agent Executor
+The agent executor is the runtime for an agent. This is what actually calls the agent, executes the actions it chooses, passes the action outputs back to the agent, and repeats. In pseudocode, this looks roughly like:
+
+  next_action = agent.get_action(...)
+  while next_action != AgentFinish:
+    observation = run(next_action)
+    next_action = agent.get_action(..., next_action, observation)
+  return next_action
+
+While this may seem simple, there are several complexities this runtime handles for you, including:
+
+  1. Handling cases where the agent selects a non-existent tool
+  2. Handling cases where the tool errors
+  3. Handling cases where the agent produces output that cannot be parsed into a tool invocation
+  4. Logging and observability at all levels (agent decisions, tool calls) to stdout and/or to LangSmith.
+
+
+Agent Tools
+Tools are functions that an agent can invoke. The Tool abstraction consists of two components:
+  1. The input schema for the tool. This tells the LLM what parameters are needed to call the tool. Without this, it will not know what the correct inputs are. These parameters should be sensibly named and described.
+  2. The function to run. This is generally just a Python function that is invoked.
+Agent needs access to the right tool to answer questions.
+The DESCRIPTION of the tools is the most important part for an agent to know which tool to look for.
+
+Tool consists of a few things.
+  1. The name of the tool.
+  2. A description of what the tool is.
+  3. JSON schema of what the inputs to the tool are.
+  4. The function to call.
+  5. Whether the result of a tool should be returned directly to the user.
+
+LangSmith Hub (for agent prompt template)
+- https://smith.langchain.com/hub/hwchase17/xml-agent-convo?organizationId=155efc8c-1b30-58c7-a881-8d360600e579
+
+
+LangServer
+- LangServe helps developers deploy LangChain chains as a REST API. You do not need to use LangServe to use LangChain.
+- It contains 3 things
+  - The definition of our chain that we just built above
+  - Our FastAPI app
+  - A definition of a route from which to serve the chain, which is done with langserve.add_routes
