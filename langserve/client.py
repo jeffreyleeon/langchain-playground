@@ -6,7 +6,8 @@ from langchain_core.messages import ChatMessage
 remote_chain = RemoteRunnable("http://localhost:8000/agent/")
 
 questions = [
-    "Can LangSmith help test my LLM applications?"
+    "Can LangSmith help test my LLM applications?",
+    "What's the weather like today in San Francisco?"
 ]
 chat_history = []
 

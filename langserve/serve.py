@@ -19,40 +19,7 @@ from langchain.pydantic_v1 import BaseModel, Field
 from langchain_core.messages import ChatMessage
 from langserve import add_routes
 
-# 1. Load Retriever
-loader = WebBaseLoader("https://docs.smith.langchain.com/overview")
-docs = loader.load()
-text_splitter = RecursiveCharacterTextSplitter()
-documents = text_splitter.split_documents(docs)
-embeddings = OpenAIEmbeddings()
-vector = FAISS.from_documents(documents, embeddings)
-retriever = vector.as_retriever()
-
-# 2. Create Tools
-retriever_tool = create_retriever_tool(
-    retriever,
-    "pluto_ceremony_search",
-    "Search for information about LangSmith. For any questions about LangSmith, you must use this tool!",
-)
-search = TavilySearchResults()
-tools = [retriever_tool, search]
-
-
-# 3. Create Agent
-prompt = hub.pull("hwchase17/openai-functions-agent")
-llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
-agent = create_openai_functions_agent(llm, tools, prompt)
-agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
-
-
-# 4. App definition
-app = FastAPI(
-  title="LangChain Server",
-  version="1.0",
-  description="A simple API server using LangChain's Runnable interfaces",
-)
-
-# 5. Adding chain route
+import uvicorn
 
 # We need to add these input/output schemas because the current AgentExecutor
 # is lacking in schemas.
@@ -65,14 +32,55 @@ class Input(BaseModel):
 class Output(BaseModel):
     output: str
 
-add_routes(
-    app,
-    agent_executor.with_types(input_type=Input, output_type=Output),
-    path="/agent",
-)
+def load_retriever():
+    loader = WebBaseLoader("https://docs.smith.langchain.com/overview")
+    docs = loader.load()
+    text_splitter = RecursiveCharacterTextSplitter()
+    documents = text_splitter.split_documents(docs)
+    embeddings = OpenAIEmbeddings()
+    vector = FAISS.from_documents(documents, embeddings)
+    retriever = vector.as_retriever()
+    return retriever
+
+def create_tools():
+    retriever_tool = create_retriever_tool(
+        retriever,
+        "pluto_ceremony_search",
+        "Search for information about LangSmith. For any questions about LangSmith, you must use this tool!",
+    )
+    tools = [retriever_tool]
+    # Different retrievers
+
+    # Add search retriever tool at the end
+    search = TavilySearchResults()
+    tools.append(search)
+    return tools
 
 if __name__ == "__main__":
-    import uvicorn
+    # 1. Load Retriever
+    retriever = load_retriever()
 
+    # 2. Create Tools
+    tools = create_tools()
+
+    # 3. Create Agent
+    prompt = hub.pull("hwchase17/openai-functions-agent")
+    llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
+    agent = create_openai_functions_agent(llm, tools, prompt)
+    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+
+    # 4. App definition
+    app = FastAPI(
+        title="LangChain Server",
+        version="1.0",
+        description="A simple API server using LangChain's Runnable interfaces",
+    )
+    add_routes(
+        app,
+        agent_executor.with_types(input_type=Input, output_type=Output),
+        path="/agent",
+    )
+
+    # Start server
     print("Starting server...")
     uvicorn.run(app, host="localhost", port=8000)
