@@ -1,20 +1,18 @@
-langchain
-langserve[all]
-langchainhub
-langchain-cli
-langchain-community
-langchain-core
-langchain-experimental
-langchain_openai
-langsmith
+langchain==0.1.4
+langchainhub==0.1.14
+langchain-cli==0.0.21
+langchain-community==0.0.16
+langchain-core==0.1.16
+langchain-experimental==0.0.49
+langchain_openai==0.0.5
+langserve[all]==0.0.41
+langsmith==0.0.84
 
 # HTML/XML parsing
-beautifulsoup4
+beautifulsoup4==4.12.3
 
 # Server
-fastapi[all]
+fastapi[all]==0.99.1
 
 # Vector Store
-# faiss-gpu
-faiss-cpu
-
+faiss-cpu==1.7.4
