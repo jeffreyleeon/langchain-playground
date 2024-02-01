@@ -1,8 +1,8 @@
 # LangChain Playground
 A playground based on Quickstart tutorial from [LangChain](https://python.langchain.com/docs/get_started/quickstart).
 
-## Preparations
-#### Create virtual environment and install dependencies
+# Preparations
+## Create virtual environment and install dependencies
 Creating a Python virtual environment is a useful practice for isolating dependencies and project environments. Here's how you can create one using the `venv` module, which comes built-in with Python 3:
 
 1. **Open your terminal or command prompt**: This is where you'll enter commands to create the virtual environment.
@@ -46,9 +46,9 @@ deactivate
 This will return you to your global Python environment.
 
 
-## Running the projects
+# Running the projects
 
-#### Install JupyterLab and run LangChain Tutorials
+## Install JupyterLab and run LangChain Tutorials
 Install JupyterLab, an interactive development environment for working with notebooks, code, and data, using `pip`, the Python package manager. Here's how to do it:
 
 1. **Ensure you have Python installed**: JupyterLab requires Python 3.6 or greater.
@@ -94,7 +94,7 @@ deactivate
 
 This will return you to your global Python environment.
 
-#### Serving LangChain chains as a REST API using LangServe
+## Serving LangChain chains as a REST API using LangServe
 1. **Start the server**: This will start the LangChain server at localhost, port 8000.
 
 ```bash
@@ -137,4 +137,33 @@ Output:
 Question: Can LangSmith help test my LLM applications?
 Answer: Yes, LangSmith can help you with your LLM applications. LangSmith provides personalized guidance and support throughout the application process, including reviewing your application materials, providing feedback, and offering tips and strategies to enhance your chances of success. Additionally, LangSmith can assist you in researching and selecting the best LLM programs that align with your interests and goals.
 ================================================
+```
+
+## Text to Speech
+
+Set up an ElevenLabs account for text to speech API calls. You can follow the instructions [here](https://elevenlabs.io/docs/introduction).
+
+1. **Export API Key**
+
+```bash
+export ELEVEN_API_KEY="..."
+```
+
+2. **Install dependencies**: Install [ffmpeg](https://ffmpeg.org/) and [mpv](https://mpv.io/).
+
+```bash
+brew install ffmpeg
+
+brew install mpv
+```
+
+Install elevenlabs
+```bash
+pip install --upgrade --quiet elevenlabs
+```
+
+3. **Run sample project**: Make sure computer audio is on.
+
+```bash
+python3 text-to-speech/text_to_speech.py
 ```
