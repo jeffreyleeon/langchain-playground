@@ -7,8 +7,11 @@ import os
 from fastapi import FastAPI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
-from langchain_community.document_loaders import WebBaseLoader
+# Document loaders
 from langchain_community.document_loaders import AmazonTextractPDFLoader
+from langchain_community.document_loaders import AsyncHtmlLoader
+from langchain_community.document_loaders import WebBaseLoader
+
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -46,6 +49,13 @@ def load_retriever(tool_type):
     elif tool_type == 'web':
         print(f"    loading web retriever")
         loader = WebBaseLoader("https://docs.smith.langchain.com/overview")
+    elif tool_type == 'html':
+        print(f"    loading HTML retriever")
+        urls = [
+            "https://medium.com/@alexandre.j_37811/phishing-attacks-part-1-b1ecef36a2e5",
+            "https://medium.com/edureka/what-is-ddos-attack-9b73bd7b9ba1"
+        ]
+        loader = AsyncHtmlLoader(urls)
     docs = loader.load()
     text_splitter = RecursiveCharacterTextSplitter()
     documents = text_splitter.split_documents(docs)
@@ -84,6 +94,14 @@ def create_tools(tool_types):
                 "Search for information about LangSmith. For any questions about LangSmith, you must use this tool!",
             )
             tools.append(retriever_tool)
+        elif tool_type == 'html':
+            print("    loading html tool")
+            retriever_tool = create_retriever_tool(
+                retriever,
+                "Html_retriever_tool",
+                "Search for information about DDoS and Phishing Attack. For any questions about DDoS and Phishing Attack, you must use this tool!",
+            )
+            tools.append(retriever_tool)
     # Add search retriever tool at the end
     search = TavilySearchResults()
     tools.append(search)
@@ -107,7 +125,7 @@ if __name__ == "__main__":
 
     # Create Agent
     prompt = hub.pull("hwchase17/openai-functions-agent")
-    llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
+    llm = ChatOpenAI(model="gpt-4", temperature=0)
     agent = create_openai_functions_agent(llm, tools, prompt)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 

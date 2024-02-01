@@ -10,6 +10,7 @@ questions = [
     "When is superbowl in 2024?", # Web search from Tavily
     "When is the 2024 Chinese New Year event, where is it?", # PDF demo
     "Who is the organizer of free yoga?", # Image demo
+    "What is a mailbomb DDoS attack?", # HTML demo
 ]
 chat_history = []
 
