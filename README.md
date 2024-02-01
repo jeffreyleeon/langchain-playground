@@ -102,7 +102,8 @@ python3 langserve/serve.py
 
 or
 
-python3 langserve/serve.py --source {default,pdf,image}
+python3 langserve/serve.py --source {web,pdf,image}
+python3 langserve/serve.py --source web --source pdf --source image
 ```
 Output:
 ```bash

@@ -35,14 +35,17 @@ class Output(BaseModel):
     output: str
 
 def load_retriever(tool_type):
+    print(f"Loading retriever: {tool_type}")
     directory = os.path.dirname(os.path.realpath(__file__))
-    match tool_type:
-        case 'pdf':
-            loader = AmazonTextractPDFLoader(f"{directory}/assets/pdf/event.pdf") # PDF
-        case 'image':
-            loader = AmazonTextractPDFLoader(f"{directory}/assets/image/yoga.jpg") # image
-        case default:
-            loader = WebBaseLoader("https://docs.smith.langchain.com/overview")
+    if tool_type == 'pdf':
+        print(f"    loading PDF retriever")
+        loader = AmazonTextractPDFLoader(f"{directory}/assets/pdf/event.pdf") # PDF
+    elif tool_type == 'image':
+        print(f"    loading image retriever")
+        loader = AmazonTextractPDFLoader(f"{directory}/assets/image/yoga.jpg") # image
+    elif tool_type == 'web':
+        print(f"    loading web retriever")
+        loader = WebBaseLoader("https://docs.smith.langchain.com/overview")
     docs = loader.load()
     text_splitter = RecursiveCharacterTextSplitter()
     documents = text_splitter.split_documents(docs)
@@ -51,45 +54,56 @@ def load_retriever(tool_type):
     retriever = vector.as_retriever()
     return retriever
 
-def create_tools(tool_type):
+def create_tools(tool_types):
     tools = []
     # Different retrievers
-    print(f"Loading custom tool type: {tool_type}")
-    retriever = load_retriever(tool_type)
-    if tool_type == 'pdf':
-        retriever_tool = create_retriever_tool(
-            retriever,
-            "new_year_event",
-            "Search for information about New Year event. For any questions about New Year event, you must use this tool!",
-        )
-        tools.append(retriever_tool)
-    elif tool_type == 'image':
-        retriever_tool = create_retriever_tool(
-            retriever,
-            "free_yoga_event",
-            "Search for information about Free Yoga event. For any questions about Free Yoga event, you must use this tool!",
-        )
-        tools.append(retriever_tool)
-
+    print(f"Loading custom tool type: {tool_types}")
+    for tool_type in tool_types:
+        retriever = load_retriever(tool_type)
+        if tool_type == 'pdf':
+            print("    loading PDF tool")
+            retriever_tool = create_retriever_tool(
+                retriever,
+                "PDF_retriever_tool",
+                "Search for information about the 2024 Chinese New Year event. For any questions about 2024 Chinese New Year event, you must use this tool!",
+            )
+            tools.append(retriever_tool)
+        elif tool_type == 'image':
+            print("    loading image tool")
+            retriever_tool = create_retriever_tool(
+                retriever,
+                "Image_retriever_tool",
+                "Search for information about Free Yoga event. For any questions about Free Yoga event, you must use this tool!",
+            )
+            tools.append(retriever_tool)
+        elif tool_type == 'web':
+            print("    loading web tool")
+            retriever_tool = create_retriever_tool(
+                retriever,
+                "Web_retriever_tool",
+                "Search for information about LangSmith. For any questions about LangSmith, you must use this tool!",
+            )
+            tools.append(retriever_tool)
     # Add search retriever tool at the end
     search = TavilySearchResults()
     tools.append(search)
+    for tool in tools:
+        print(f"Finished loading tools: {tool.name}")
     return tools
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog=__file__)
     parser.add_argument(
         '--source',
-        choices=['default', 'pdf', 'image'],
-        default='default',
         type=str.lower,
-        help='Choose the source of content, could be from website, image, PDF, etc.'
+        action='append',
+        help='Choose the source of content, supported options: {image, PDF}.'
     )
     args = parser.parse_args()
     print(f"Input args: {args}")
 
     # Load Retriever and Create Tools
-    tools = create_tools(tool_type=args.source)
+    tools = create_tools(tool_types=args.source)
 
     # Create Agent
     prompt = hub.pull("hwchase17/openai-functions-agent")
