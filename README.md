@@ -99,6 +99,10 @@ This will return you to your global Python environment.
 
 ```bash
 python3 langserve/serve.py
+
+or
+
+python3 langserve/serve.py --source {default,pdf,image}
 ```
 Output:
 ```bash
