@@ -9,6 +9,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 # Document loaders
 from langchain_community.document_loaders import AmazonTextractPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.document_loaders import AsyncHtmlLoader
 from langchain_community.document_loaders import WebBaseLoader
 
@@ -42,7 +43,7 @@ def load_retriever(tool_type):
     directory = os.path.dirname(os.path.realpath(__file__))
     if tool_type == 'pdf':
         print(f"    loading PDF retriever")
-        loader = AmazonTextractPDFLoader(f"{directory}/assets/pdf/event.pdf") # PDF
+        loader = PyPDFLoader(f"{directory}/assets/pdf/http-rfc.pdf") # PDF
     elif tool_type == 'image':
         print(f"    loading image retriever")
         loader = AmazonTextractPDFLoader(f"{directory}/assets/image/yoga.jpg") # image
@@ -75,7 +76,7 @@ def create_tools(tool_types):
             retriever_tool = create_retriever_tool(
                 retriever,
                 "PDF_retriever_tool",
-                "Search for information about the 2024 Chinese New Year event. For any questions about 2024 Chinese New Year event, you must use this tool!",
+                "Search for information about the HTTP. For any questions about HTTP, you must use this tool!",
             )
             tools.append(retriever_tool)
         elif tool_type == 'image':

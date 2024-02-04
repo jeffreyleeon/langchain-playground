@@ -8,7 +8,7 @@ remote_chain = RemoteRunnable("http://localhost:8000/agent/")
 questions = [
     "Can LangSmith help test my LLM applications?", # Web search from specific webpage
     "When is superbowl in 2024?", # Web search from Tavily
-    "When is the 2024 Chinese New Year event, where is it?", # PDF demo
+    "What is HTTP Client Error 404?", # PDF demo
     "Who is the organizer of free yoga?", # Image demo
     "What is a mailbomb DDoS attack?", # HTML demo
 ]
