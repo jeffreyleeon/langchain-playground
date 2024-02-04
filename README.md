@@ -139,6 +139,25 @@ Answer: Yes, LangSmith can help you with your LLM applications. LangSmith provid
 ================================================
 ```
 
+## Run with Docker
+
+1. **Update API keys**: Update OpenAI, Traily API keys in Dockerfile
+
+2. **Build Docker image**: This will build the LangServe server into Docker image
+```bash
+docker build -t langchain-server .
+```
+
+3. **Run Docker container**: This will run the server in Docker container and expose port 8000.
+```bash
+docker container run -p 8000:8000 --name langchain-server -d langchain-server
+```
+
+4. **Run LangServe client to test**
+```bash
+python3 langserve/client.py 
+```
+
 ## Text to Speech
 
 Set up an ElevenLabs account for text to speech API calls. You can follow the instructions [here](https://elevenlabs.io/docs/introduction).

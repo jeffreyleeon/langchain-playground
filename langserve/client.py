@@ -3,12 +3,13 @@ from typing import List
 from langserve import RemoteRunnable
 from langchain_core.messages import ChatMessage
 
-remote_chain = RemoteRunnable("http://localhost:8000/agent/")
+remote_chain = RemoteRunnable("http://0.0.0.0:8000/agent/")
 
 questions = [
     "Can LangSmith help test my LLM applications?", # Web search from specific webpage
     "When is superbowl in 2024?", # Web search from Tavily
     "What is HTTP Client Error 404?", # PDF demo
+    "What are some HTTP security concerns?", # PDF demo
     "Who is the organizer of free yoga?", # Image demo
     "What is a mailbomb DDoS attack?", # HTML demo
 ]

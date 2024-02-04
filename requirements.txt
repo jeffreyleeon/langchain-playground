@@ -11,6 +11,9 @@ langsmith==0.0.84
 # HTML/XML parsing
 beautifulsoup4==4.12.3
 
+# PDF parsing
+pypdf==4.0.1
+
 # Server
 fastapi[all]==0.109.1
 
