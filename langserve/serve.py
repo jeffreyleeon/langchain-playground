@@ -27,6 +27,8 @@ from langchain_core.messages import ChatMessage
 from langserve import add_routes
 import uvicorn
 
+from parsers.html_parser import USCISParser
+
 # We need to add these input/output schemas because the current AgentExecutor
 # is lacking in schemas.
 
@@ -49,7 +51,9 @@ def load_retriever(tool_type):
         loader = AmazonTextractPDFLoader(f"{directory}/assets/image/yoga.jpg") # image
     elif tool_type == 'web':
         print(f"    loading web retriever")
-        loader = WebBaseLoader("https://docs.smith.langchain.com/overview")
+        parser = USCISParser()
+        urls = parser.parse_urls_in_page()
+        loader = WebBaseLoader(urls)
     elif tool_type == 'html':
         print(f"    loading HTML retriever")
         urls = [
@@ -92,7 +96,7 @@ def create_tools(tool_types):
             retriever_tool = create_retriever_tool(
                 retriever,
                 "Web_retriever_tool",
-                "Search for information about LangSmith. For any questions about LangSmith, you must use this tool!",
+                "Search for information about H1B Working VISA. For any questions about H1B Working VISA, you must use this tool!",
             )
             tools.append(retriever_tool)
         elif tool_type == 'html':

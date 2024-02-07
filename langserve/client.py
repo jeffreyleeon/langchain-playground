@@ -15,15 +15,19 @@ questions = [
 ]
 chat_history = []
 
-for question in questions:
-    print(f"Question: {question}")
-    response = remote_chain.invoke({
-        "input": question,
-        "chat_history": chat_history
-    })
-    answer = response['output']
-    print(f"Answer: {answer}")
-    # Record chat history
-    chat_history.append(ChatMessage(content=question, type='chat', role='user'))
-    chat_history.append(ChatMessage(content=answer, type='chat', role='assistant'))
-    print('================================================\n')
+while True:
+    try:
+        question = input("Enter your question: ")
+        print(f"Question: {question}")
+        response = remote_chain.invoke({
+            "input": question,
+            "chat_history": chat_history
+        })
+        answer = response['output']
+        print(f"Answer: {answer}")
+        # Record chat history
+        chat_history.append(ChatMessage(content=question, type='chat', role='user'))
+        chat_history.append(ChatMessage(content=answer, type='chat', role='assistant'))
+        print('================================================\n')
+    except (EOFError,ValueError):
+        break
